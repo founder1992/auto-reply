@@ -1,0 +1,45 @@
+{
+  "name": "sentence",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "mixins": {
+    "ShortId": {},
+    "SkipLimit": {},
+    "TimeStamp": {
+      "index": true
+    }
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "id": true
+    },
+    "uid": {
+      "type": "string",
+      "index": "true",
+      "description": "用户id"
+    },
+    "key": {
+      "type": "string",
+      "index": true,
+      "description": "来句"
+    },
+    "value": {
+      "type": "string",
+      "description": "回复"
+    },
+    "type": {
+      "type": "string",
+      "description": "类型 hard - 硬匹配；sort - 模糊匹配",
+      "index": true,
+      "default": "sort"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
