@@ -95,13 +95,13 @@ module.exports = function (app) {
   };
 
   //
-  nightmare
-    .useragent('chrome')
-    .goto("https://react.docschina.org/docs/introducing-jsx.html")
-    .exists('.css-plpslk')
-    .then((ans) => {
-      console.log(ans)
-    })
+  // nightmare
+  //   .useragent('chrome')
+  //   .goto("https://react.docschina.org/docs/introducing-jsx.html")
+  //   .exists('.css-plpslk')
+  //   .then((ans) => {
+  //     console.log(ans)
+  //   })
     // .evaluate((key) => {
     //   return document.querySelector(key).innerText
     // }, ".token,.keyword")

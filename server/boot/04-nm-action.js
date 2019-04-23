@@ -15,16 +15,18 @@ module.exports = function (app) {
           if (v)
             app.nightmare
               .click('.web_wechat_reddot_middle')
-              .evaluate((key) => {
-                return document.querySelectorAll(key)
+              .evaluate(function (key) {
+                var mynodeLists = document.querySelectorAll(key);
+                return Array.prototype.map.call(mynodeLists, (v) => {return v.innerText});
               }, ".js_message_plain.ng-binding")
               .then(async (text) => {
                 await judgeAndSend(userId, text)
               });
           else
             app.nightmare
-              .evaluate((key) => {
-                return document.querySelectorAll(key)
+              .evaluate(function(key) {
+                var mynodeLists = document.querySelectorAll(key);
+                return Array.prototype.map.call(mynodeLists, (v) => {return v.innerText});
               }, ".js_message_plain.ng-binding")
               .then(async (text) => {
                 await judgeAndSend(userId, text)
@@ -39,9 +41,9 @@ module.exports = function (app) {
     // chatStock: message list in redis(not complete)
     // value: send success and callback
     let msgArr, result, chatStock, value;
-    msgArr = Array.prototype.map.call(nodeLists, (v) => {return v.innerText});
+    msgArr = nodeLists;
     chatStock = await app.kvs.chatStock.get(`${userId}-chat`);
-
+    chatStock = chatStock instanceof Array ? chatStock : [];
     if (_.last(msgArr) !== _.last(chatStock)) {
       result = await answer(_.last(msgArr), userId);
       value = await sendMessage(userId, result && result.value);
