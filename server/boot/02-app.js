@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('ramda-extend');
+const loopback = require('loopback');
 
 module.exports = function (app) {
   global._ = _;
@@ -13,5 +14,12 @@ module.exports = function (app) {
     });
   };
 
-  _.forEachObjIndexed(taskToPromise, app.models)
+  _.forEachObjIndexed(taskToPromise, app.models);
+
+
+  app.use(loopback.token({
+    cookies: ['access_token'],
+    headers: ['access_token', 'X-Access-Token'],
+    params:  ['access_token']
+  }));
 };

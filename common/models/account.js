@@ -1,13 +1,10 @@
 'use strict';
 const g = require('strong-globalize')();
 const _ = require('ramda-extend');
+const ic = require('../mixins/init-action');
+const debug = require('debug')('AR:Account');
 
 module.exports = function (Account) {
-  /**
-   *
-   */
-  Account.idFromOp = _.compose(_.map(_.prop('userId')), _.map(_.prop('accessToken')), _.Maybe.of);
-
   Account.login = function (credentials, include) {
     return this._doLogin(credentials, include, {enabled: {neq: false}});
   };
@@ -78,14 +75,23 @@ module.exports = function (Account) {
     });
   };
 
-  /**
-   *
-   */
-  Account.getQrCode = _.compose(_.taskToPromise, v => Account.app.getQrCode(v), _.join, Account.idFromOp);
+  Account.me = (options) => {
+    return Account.findOne({
+      where: {id: options.accessToken.userId}
+    });
+  };
 
-  Account.start = _.compose(_.map(v => Account.app.startListen(v)), Account.idFromOp);
+  Account.getQrCode = (options) => {
+    return Account.app.getQrCode(options.accessToken.userId)
+  };
 
-  Account.stop = _.compose(_.map(_.compose(v => Account.app.clearTimeout(v), v => v + "-listener")), Account.idFromOp);
+  Account.start = (options) => {
+    return Account.app.startListen(options.accessToken.userId)
+  };
+
+  Account.stop = (options) => {
+    return Account.app.clearTimeout(options.accessToken.userId + "-listener")
+  };
 
   Account.remoteMethod(
     'login',
@@ -128,5 +134,13 @@ module.exports = function (Account) {
     accepts: [{arg: 'options', type: 'object', http: 'optionsFromRequest'}],
     returns: {arg: 'data', type: 'object', root: true},
     http: {verb: 'get', path: '/stop'},
+  });
+
+  Account.remoteMethod('me', {
+    description: '我的信息',
+    accessType: 'READ',
+    accepts: [{arg: 'options', type: 'object', http: 'optionsFromRequest'}],
+    returns: {arg: 'data', type: 'object', root: true},
+    http: {verb: 'get', path: '/me'},
   });
 };

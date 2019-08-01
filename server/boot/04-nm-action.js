@@ -72,8 +72,8 @@ module.exports = function (app) {
     return `${app.get("domain")}/images/${filename}`
   };
 
-  download = _.curry((filename, uri) => {
-    return new _.Task((reject, resolve) => {
+  download = (filename, uri) => {
+    return new Promise((reject, resolve) => {
         request
           .get(uri)
           .on('error', function(err) {
@@ -82,13 +82,13 @@ module.exports = function (app) {
           .pipe(fs.createWriteStream(`${process.cwd()}/qrCode/${filename}`))
           .on('close', (err, d) => {
             if (err) reject(err);
-            else resolve(d || filename)
+            else resolve(makeFile(d || filename))
           });
       }
     )
-  });
+  };
 
   answer = _.compose(_.taskToPromise, app.models.Sentence.answer);
 
-  app.downloadByUrl = _.compose(_.chain(_.compose(_.Task.of, makeFile)), download);
+  app.downloadByUrl = download;
 };

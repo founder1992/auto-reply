@@ -45,7 +45,8 @@
           "getQrCode": true,
           "login": true,
           "start": true,
-          "stop": true
+          "stop": true,
+          "me": true
         }
       }
     }
@@ -58,7 +59,8 @@
         "sharedMethods": {
           "*": false,
           "answer": true,
-          "create": true
+          "create": true,
+          "add": true
         }
       }
     }

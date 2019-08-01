@@ -53,8 +53,7 @@ module.exports = function (app) {
   nightmare.app = app;
 
   app.getQrCode = function (userId) {
-    return new _.Task(function (reject, resolve) {
-      resolve = _.fork(resolve);
+    return new Promise(function (reject, resolve) {
       nightmare
         .useragent('chrome')
         .goto(app.get('webWechat').url)
@@ -69,7 +68,7 @@ module.exports = function (app) {
                 return document.querySelector('.img').src;
               })
               .then(async (result) => {
-                let path = app.downloadByUrl(`${userId}${moment().format("YYYYMMDDmmss")}.png`, result);
+                let path = await app.downloadByUrl(`${userId}${moment().format("YYYYMMDDmmss")}.png`, result);
                 resolve(path)
               })
               .catch((error) => {
@@ -82,7 +81,7 @@ module.exports = function (app) {
                 return document.querySelector('.img').src;
               })
               .then(async (result) => {
-                let path = app.downloadByUrl(`${userId}${moment().format("YYYYMMDDmmss")}.png`, result);
+                let path = await app.downloadByUrl(`${userId}${moment().format("YYYYMMDDmmss")}.png`, result);
                 resolve(path)
               })
               .catch((error) => {

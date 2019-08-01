@@ -1,5 +1,6 @@
 'use strict';
 const _ = require('ramda-extend');
+const ic = require('../mixins/init-action');
 
 module.exports = function(Sentence) {
 
@@ -11,6 +12,14 @@ module.exports = function(Sentence) {
     return Sentence.findOne({where: {key: {like: `%${q}%`}, uid: uid, type: "sort"}});
   };
 
+  const add = _.curry((k, v, t, uid) => {
+    return Sentence.create({key: k, value: v, uid: uid})
+  });
+
+  const find = (f) => {
+    return Sentence.find(f);
+  };
+
   const hardTask = _.compose(_.promiseToTask, hard);
 
   const sortTask = _.compose(_.promiseToTask, sort);
@@ -19,18 +28,24 @@ module.exports = function(Sentence) {
     return h || s
   });
 
-  Sentence.answer = (q, uid) => {
+  Sentence.answer = async (q, uid) => {
     return _.liftA2(chain, hardTask(q, uid), sortTask(q, uid));
   };
 
-  Sentence.remoteMethod('answer', {
-    description: 'answer',
-    accessType: 'READ',
+  Sentence.add = async (k, v, t, options) => {
+    return Sentence.create({key: k, value: v, uid: options.accessToken.userId})
+  };
+
+  Sentence.remoteMethod('add', {
+    description: 'add',
+    accessType: 'WRITE',
     accepts: [
-      {arg: 'q', type: 'string', required: true},
-      {arg: 'uid', type: 'string', required: true}
+      {arg: 'key', type: 'string', required: true},
+      {arg: 'value', type: 'string', required: true},
+      {arg: 't', type: 'string', description: "hard | sort"},
+      {arg: 'options', type: 'object', http: 'optionsFromRequest'}
     ],
     returns: {arg: 'data', type: 'object', root: true},
-    http: {verb: 'get', path: '/answer'},
+    http: {verb: 'post', path: '/add'},
   });
 };
