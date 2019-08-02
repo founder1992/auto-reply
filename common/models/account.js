@@ -81,8 +81,10 @@ module.exports = function (Account) {
     });
   };
 
-  Account.getQrCode = (options) => {
-    return Account.app.getQrCode(options.accessToken.userId)
+  Account.getQrCode = async (options) => {
+    let qrcode = await Account.app.getQrCode(options.accessToken.userId);
+    Account.app.startCheckLogin();
+    return qrcode
   };
 
   Account.start = (options) => {
@@ -116,7 +118,7 @@ module.exports = function (Account) {
     description: '获取登陆二维码',
     accessType: 'READ',
     accepts: [{arg: 'options', type: 'object', http: 'optionsFromRequest'}],
-    returns: {arg: 'data', type: 'object', root: true},
+    returns: {arg: 'data', type: 'string', root: true},
     http: {verb: 'get', path: '/qrCode'},
   });
 

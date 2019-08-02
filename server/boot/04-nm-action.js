@@ -74,16 +74,17 @@ module.exports = function (app) {
 
   download = (filename, uri) => {
     return new Promise((reject, resolve) => {
-        request
-          .get(uri)
-          .on('error', function(err) {
-            reject(err)
-          })
-          .pipe(fs.createWriteStream(`${process.cwd()}/qrCode/${filename}`))
-          .on('close', (err, d) => {
-            if (err) reject(err);
-            else resolve(makeFile(d || filename))
-          });
+      resolve(uri)
+        // request
+        //   .get(uri)
+        //   .on('error', function(err) {
+        //     reject(err)
+        //   })
+        //   .pipe(fs.createWriteStream(`${process.cwd()}/qrCode/${filename}`))
+        //   .on('close', (err, d) => {
+        //     if (err) reject(err);
+        //     else resolve(makeFile(d || filename))
+        //   });
       }
     )
   };
@@ -91,4 +92,21 @@ module.exports = function (app) {
   answer = _.compose(_.taskToPromise, app.models.Sentence.answer);
 
   app.downloadByUrl = download;
+
+  app.startCheckLogin = () => {
+    app.checkingLogin = setInterval(() => {
+      app.nightmare
+        .wait('.action')
+        .evaluate(function () {
+          return document.querySelector('.avatar').classList[1];
+        })
+        .then(async (result) => {
+          if (result === "show") {
+            console.log("yes");
+            app.publishIO.scanned();
+            clearInterval(app.checkingLogin);
+          }
+        })
+    }, 1000)
+  }
 };

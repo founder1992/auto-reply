@@ -82,6 +82,7 @@ module.exports = function (app) {
               })
               .then(async (result) => {
                 let path = await app.downloadByUrl(`${userId}${moment().format("YYYYMMDDmmss")}.png`, result);
+                // let path = await Promise.resolve(result);
                 resolve(path)
               })
               .catch((error) => {
@@ -92,26 +93,4 @@ module.exports = function (app) {
         })
     });
   };
-
-  //
-  // nightmare
-  //   .useragent('chrome')
-  //   .goto("https://react.docschina.org/docs/introducing-jsx.html")
-  //   .exists('.css-plpslk')
-  //   .then((ans) => {
-  //     console.log(ans)
-  //   })
-    // .evaluate((key) => {
-    //   return document.querySelector(key).innerText
-    // }, ".token,.keyword")
-    // .then((text) => {
-    //   console.log(333, text, app.nightmare);
-    //   nightmare
-    //     .goto("http://es6.ruanyifeng.com/#docs/generator")
-    //     .evaluate((key) => {
-    //       return document.querySelector(key).innerText
-    //     }, ".token,.keyword")
-    //     .then((aaa) => {console.log(7777, aaa)})
-    // })
-
 };
